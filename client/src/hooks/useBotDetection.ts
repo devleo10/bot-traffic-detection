@@ -94,25 +94,8 @@ export const useBotDetection = (options: BotDetectionOptions = {}) => {
 
       const result = await Promise.race([detectionPromise, timeoutPromise]);
       
-      console.log('🤖 Bot Detection Result:', {
-        score: result.score,
-        confidence: result.confidence,
-        reasons: result.reasons,
-        method: result.method,
-        botThreshold: opts.botThreshold,
-        captchaThreshold: opts.captchaThreshold
-      });
-      
       const isBot = result.score >= opts.botThreshold;
-      const needsCaptcha = !isBot && result.score >= opts.captchaThreshold;
-
-      console.log('🎯 Detection Decision:', {
-        isBot,
-        needsCaptcha,
-        score: result.score,
-        botThreshold: opts.botThreshold,
-        captchaThreshold: opts.captchaThreshold
-      });
+      const needsCaptcha = !isBot; // Always require captcha unless it's a bot
 
       setState(prev => ({
         ...prev,
@@ -161,25 +144,7 @@ export const useBotDetection = (options: BotDetectionOptions = {}) => {
     runDetection();
   };
 
-  const forceRoute = (route: 'user' | 'bot' | 'captcha') => {
-    setState(prev => ({
-      ...prev,
-      isLoading: false,
-      isBot: route === 'bot',
-      needsCaptcha: route === 'captcha',
-      isVerified: route === 'user'
-    }));
-  };
-
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const forceParam = urlParams.get('force');
-    
-    if (forceParam === 'bot' || forceParam === 'user' || forceParam === 'captcha') {
-      forceRoute(forceParam as 'user' | 'bot' | 'captcha');
-      return;
-    }
-
     runDetection();
   }, []);
 
@@ -187,7 +152,6 @@ export const useBotDetection = (options: BotDetectionOptions = {}) => {
     ...state,
     handleCaptchaSuccess,
     handleCaptchaFailure,
-    retryDetection,
-    forceRoute
+    retryDetection
   };
 };
