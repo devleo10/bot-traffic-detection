@@ -6,7 +6,7 @@ import {
   DollarSign,
   Smartphone,
 } from 'lucide-react';
-import heroImage from '../../assets/heroImage.jpg';
+import heroImage from '../../assets/img.png'; // Using the correct case-sensitive filename
 import logo from '../../assets/img.png';
 
 function UserPage() {

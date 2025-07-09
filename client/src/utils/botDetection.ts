@@ -6,6 +6,11 @@ export interface DetectionResult {
   confidence: number; // How confident we are in the score
   reasons: string[]; // Reasons for the score
   method: string; // Primary detection method used
+  connectionQuality?: {
+    speed: 'slow' | 'medium' | 'fast';
+    secure: boolean;
+    trustScore: number; // 0-1 trust score
+  };
 }
 
 export class BotDetector {
@@ -38,7 +43,9 @@ export class BotDetector {
       this.detectTimingAnalysis.bind(this),
       this.detectDOMManipulation.bind(this),
       this.detectLocalStorage.bind(this),
-      this.detectMouseBehavior.bind(this)
+      this.detectMouseBehavior.bind(this),
+      this.detectConnectionQuality.bind(this), // New method
+      this.detectNavigatorProperties.bind(this) // New method
     ];
   }
 
@@ -52,14 +59,39 @@ export class BotDetector {
     let totalConfidence = 0;
     let allReasons: string[] = [];
     let methodsUsed: string[] = [];
+    let connectionQuality: DetectionResult['connectionQuality'] = {
+      speed: 'medium',
+      secure: window.location.protocol === 'https:',
+      trustScore: 0.5
+    };
 
     results.forEach((result, index) => {
       if (result.status === 'fulfilled' && result.value) {
-        const { score = 0, confidence = 0.5, reasons = [], method = `method${index}` } = result.value;
-        totalScore += score * confidence;
-        totalConfidence += confidence;
-        allReasons.push(...reasons);
-        methodsUsed.push(method);
+        const { 
+          score = 0, 
+          confidence = 0, 
+          reasons = [], 
+          method = `method-${index}`, 
+          connectionQuality: detectedConnectionQuality 
+        } = result.value;
+        
+        if (score && confidence) {
+          totalScore += score * confidence;
+          totalConfidence += confidence;
+        }
+        
+        if (reasons.length > 0) {
+          allReasons.push(...reasons);
+        }
+        
+        if (method) {
+          methodsUsed.push(method);
+        }
+        
+        // Update connection quality if available
+        if (detectedConnectionQuality) {
+          connectionQuality = detectedConnectionQuality;
+        }
       }
     });
 
@@ -70,7 +102,8 @@ export class BotDetector {
       score: Math.max(0, Math.min(1, finalScore)),
       confidence: finalConfidence,
       reasons: allReasons,
-      method: methodsUsed.join(', ')
+      method: methodsUsed.join(', '),
+      connectionQuality
     };
 
     return finalResult;
@@ -444,6 +477,180 @@ export class BotDetector {
         });
       }, 100);
     });
+  }
+
+  // Connection Quality Detection
+  private async detectConnectionQuality(): Promise<Partial<DetectionResult>> {
+    try {
+      const connectionInfo = (navigator as any).connection || 
+                            (navigator as any).mozConnection || 
+                            (navigator as any).webkitConnection;
+      
+      let connectionQuality = {
+        speed: 'medium' as 'slow' | 'medium' | 'fast',
+        secure: window.location.protocol === 'https:',
+        trustScore: 0.5
+      };
+      
+      // Check if we can get connection info
+      if (connectionInfo) {
+        // Check connection type
+        if (connectionInfo.type) {
+          if (['wifi', 'ethernet'].includes(connectionInfo.type)) {
+            connectionQuality.speed = 'fast';
+            connectionQuality.trustScore += 0.2;
+          } else if (['cellular'].includes(connectionInfo.type)) {
+            // Check cellular generation
+            if (connectionInfo.effectiveType) {
+              if (['4g', '5g'].includes(connectionInfo.effectiveType)) {
+                connectionQuality.speed = 'fast';
+                connectionQuality.trustScore += 0.1;
+              } else if (['3g'].includes(connectionInfo.effectiveType)) {
+                connectionQuality.speed = 'medium';
+              } else {
+                connectionQuality.speed = 'slow';
+                connectionQuality.trustScore -= 0.1;
+              }
+            }
+          } else if (['none', 'unknown'].includes(connectionInfo.type)) {
+            connectionQuality.speed = 'slow';
+            connectionQuality.trustScore -= 0.2;
+          }
+        }
+        
+        // Check if data saver is enabled (suspicious)
+        if (connectionInfo.saveData) {
+          connectionQuality.trustScore -= 0.1;
+        }
+      } else {
+        // Measure connection speed with a tiny image fetch
+        const startTime = performance.now();
+        const response = await fetch('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
+        await response.blob();
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        
+        if (duration < 100) {
+          connectionQuality.speed = 'fast';
+          connectionQuality.trustScore += 0.1;
+        } else if (duration < 500) {
+          connectionQuality.speed = 'medium';
+        } else {
+          connectionQuality.speed = 'slow';
+          connectionQuality.trustScore -= 0.1;
+        }
+      }
+      
+      // HTTPS check
+      if (connectionQuality.secure) {
+        connectionQuality.trustScore += 0.2;
+      } else {
+        connectionQuality.trustScore -= 0.3; // Heavily penalize non-HTTPS
+      }
+      
+      // Clamp trust score
+      connectionQuality.trustScore = Math.max(0, Math.min(1, connectionQuality.trustScore));
+      
+      return {
+        score: connectionQuality.trustScore < 0.3 ? 0.6 : 0, // Only score as bot-like if very low trust
+        confidence: 0.7,
+        reasons: connectionQuality.trustScore < 0.3 ? ['Suspicious connection quality'] : [],
+        method: 'connection-quality',
+        connectionQuality
+      };
+    } catch (error) {
+      return {
+        score: 0.1, // Small penalty for errors
+        confidence: 0.3,
+        reasons: ['Connection quality check failed'],
+        method: 'connection-quality-error',
+        connectionQuality: {
+          speed: 'medium',
+          secure: window.location.protocol === 'https:',
+          trustScore: 0.4
+        }
+      };
+    }
+  }
+  
+  // Navigator Properties Detection (for device trust)
+  private async detectNavigatorProperties(): Promise<Partial<DetectionResult>> {
+    try {
+      const reasons: string[] = [];
+      let trustScore = 0.5;
+      let score = 0;
+      
+      // Check device memory
+      if ('deviceMemory' in navigator) {
+        const memory = (navigator as any).deviceMemory;
+        if (memory < 2) {
+          trustScore -= 0.1;
+        } else if (memory > 4) {
+          trustScore += 0.1;
+        }
+      }
+      
+      // Check hardwareConcurrency (CPU cores)
+      if ('hardwareConcurrency' in navigator) {
+        const cores = navigator.hardwareConcurrency;
+        if (cores < 2) {
+          trustScore -= 0.1;
+          reasons.push('Suspiciously low CPU cores');
+        } else if (cores > 4) {
+          trustScore += 0.1;
+        }
+      }
+      
+      // Check for service worker support (legitimate browsers)
+      if ('serviceWorker' in navigator) {
+        trustScore += 0.1;
+      } else {
+        trustScore -= 0.2;
+        reasons.push('No service worker support');
+      }
+      
+      // Check for legitimate language settings
+      if (navigator.languages && navigator.languages.length > 0) {
+        trustScore += 0.1;
+      } else if (!navigator.language) {
+        trustScore -= 0.2;
+        reasons.push('Missing language settings');
+        score += 0.3;
+      }
+      
+      // Check if cookies are enabled
+      if (navigator.cookieEnabled) {
+        trustScore += 0.1;
+      } else {
+        trustScore -= 0.1;
+        reasons.push('Cookies disabled');
+      }
+      
+      // Calculate final score
+      if (trustScore < 0.3) {
+        score += 0.4;
+        reasons.push('Suspicious navigator properties');
+      }
+      
+      return {
+        score,
+        confidence: 0.6,
+        reasons,
+        method: 'navigator-properties',
+        connectionQuality: {
+          speed: 'medium',
+          secure: window.location.protocol === 'https:',
+          trustScore: Math.max(0, Math.min(1, trustScore))
+        }
+      };
+    } catch {
+      return {
+        score: 0.1,
+        confidence: 0.3,
+        reasons: ['Navigator properties check failed'],
+        method: 'navigator-properties-error'
+      };
+    }
   }
 }
 

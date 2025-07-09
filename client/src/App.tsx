@@ -13,13 +13,17 @@ function App() {
     isBot,
     needsCaptcha,
     isVerified,
+    isTrustedConnection,
+    connectionQuality,
     handleCaptchaSuccess,
     handleCaptchaFailure
   } = useBotDetection({
     timeout: 3000,
     botThreshold: 0.9,     // 0.9-1.0 = Bot (SaaS page) - made even higher
     captchaThreshold: 0.05, // 0.05-0.9 = CAPTCHA challenge - made very low to trigger easily
-    enableCaching: false   // Disabled caching for testing - 0.0-0.05 = Human (User page)
+    enableCaching: true,   // Enable caching for trusted connections
+    skipVerificationForTrustedConnections: true,  // Skip CAPTCHA for trusted connections
+    connectionTrustThreshold: 0.6  // Threshold for trusted connections
   });
 
   // Update loading stage based on detection state
@@ -37,7 +41,6 @@ function App() {
   }
 
   // Show CAPTCHA verification if needed
-  // Show CAPTCHA verification if needed
   if (needsCaptcha) {
     return (
       <CaptchaChallenge
@@ -46,22 +49,30 @@ function App() {
       />
     );
   }
+
   // Show final redirect loading
   if (!isVerified && !isBot) {
     return <LoadingScreen stage="redirecting" progress={90} />;
   }
 
-  // Route to appropriate page based on detection result
+  // Route based on detection result
   if (isBot) {
-    // Bot detected - show business/SaaS page
+    // Suspicious connection or identified bot - show SaaS page
     return <BotPage />;
   }
 
+  // Log connection quality for debugging (only in development)
+  if (import.meta.env.DEV && connectionQuality) {
+    console.log('Connection quality:', connectionQuality);
+    console.log('Trusted connection:', isTrustedConnection);
+  }
+
+  // Trusted or verified connection - show betting page
   return (
     <div className="relative">
       <UserPage />
     </div>
-  );  // Desktop users see the betting page
+  );
 }
 
 export default App;

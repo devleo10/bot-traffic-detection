@@ -8,6 +8,8 @@ export interface BotDetectionState {
   isBot: boolean;
   needsCaptcha: boolean;
   isVerified: boolean;
+  isTrustedConnection: boolean;
+  connectionQuality: DetectionResult['connectionQuality'] | null;
 }
 
 export interface BotDetectionOptions {
@@ -16,6 +18,8 @@ export interface BotDetectionOptions {
   captchaThreshold?: number;
   enableCaching?: boolean;
   cacheExpiry?: number;
+  skipVerificationForTrustedConnections?: boolean;
+  connectionTrustThreshold?: number;
 }
 
 const DEFAULT_OPTIONS: Required<BotDetectionOptions> = {
@@ -23,7 +27,9 @@ const DEFAULT_OPTIONS: Required<BotDetectionOptions> = {
   botThreshold: 0.7,
   captchaThreshold: 0.3,
   enableCaching: true,
-  cacheExpiry: 24 * 60 * 60 * 1000
+  cacheExpiry: 24 * 60 * 60 * 1000,
+  skipVerificationForTrustedConnections: true,
+  connectionTrustThreshold: 0.6
 };
 
 export const useBotDetection = (options: BotDetectionOptions = {}) => {
@@ -35,7 +41,9 @@ export const useBotDetection = (options: BotDetectionOptions = {}) => {
     error: null,
     isBot: false,
     needsCaptcha: false,
-    isVerified: false
+    isVerified: false,
+    isTrustedConnection: false,
+    connectionQuality: null
   });
 
   const checkCachedVerification = (): boolean => {
@@ -79,7 +87,8 @@ export const useBotDetection = (options: BotDetectionOptions = {}) => {
         isLoading: false,
         isVerified: true,
         isBot: false,
-        needsCaptcha: false
+        needsCaptcha: false,
+        isTrustedConnection: true
       }));
       return;
     }
@@ -94,19 +103,34 @@ export const useBotDetection = (options: BotDetectionOptions = {}) => {
 
       const result = await Promise.race([detectionPromise, timeoutPromise]);
       
+      // Extract connection quality
+      const connectionQuality = result.connectionQuality;
+      const isTrustedConnection = connectionQuality && 
+                                connectionQuality.trustScore >= opts.connectionTrustThreshold &&
+                                connectionQuality.secure;
+      
+      // Determine if user is a bot
       const isBot = result.score >= opts.botThreshold;
-      const needsCaptcha = !isBot; // Always require captcha unless it's a bot
-
+      
+      // Determine if captcha is needed
+      // Skip captcha for trusted connections if the option is enabled
+      const skipCaptcha = opts.skipVerificationForTrustedConnections && isTrustedConnection;
+      const needsCaptcha = !isBot && !skipCaptcha && result.score >= opts.captchaThreshold;
+      
+      // Update state
       setState(prev => ({
         ...prev,
         isLoading: false,
         result,
         isBot,
         needsCaptcha,
-        isVerified: !isBot && !needsCaptcha
+        isVerified: !isBot && (!needsCaptcha || (skipCaptcha ? true : false)),
+        isTrustedConnection: isTrustedConnection ? true : false,
+        connectionQuality: connectionQuality || null
       }));
 
-      if (!isBot && !needsCaptcha) {
+      // Cache verification if user is verified
+      if (!isBot && (!needsCaptcha || skipCaptcha)) {
         cacheVerification(true);
       }
 
@@ -117,7 +141,9 @@ export const useBotDetection = (options: BotDetectionOptions = {}) => {
         error: error instanceof Error ? error.message : 'Detection failed',
         isBot: false,
         needsCaptcha: true,
-        isVerified: false
+        isVerified: false,
+        isTrustedConnection: false,
+        connectionQuality: null
       }));
     }
   };
@@ -126,7 +152,12 @@ export const useBotDetection = (options: BotDetectionOptions = {}) => {
     setState(prev => ({
       ...prev,
       needsCaptcha: false,
-      isVerified: true
+      isVerified: true,
+      // If they pass CAPTCHA, they get a slight boost in connection trust
+      connectionQuality: prev.connectionQuality ? {
+        ...prev.connectionQuality,
+        trustScore: Math.min(1, (prev.connectionQuality.trustScore || 0) + 0.1)
+      } : null
     }));
     cacheVerification(true);
   };
@@ -136,7 +167,13 @@ export const useBotDetection = (options: BotDetectionOptions = {}) => {
       ...prev,
       needsCaptcha: false,
       isBot: true,
-      isVerified: false
+      isVerified: false,
+      isTrustedConnection: false,
+      // If they fail CAPTCHA, they get marked as untrusted
+      connectionQuality: prev.connectionQuality ? {
+        ...prev.connectionQuality,
+        trustScore: Math.max(0, (prev.connectionQuality.trustScore || 0) - 0.3)
+      } : null
     }));
   };
 
