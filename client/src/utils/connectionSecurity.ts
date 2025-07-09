@@ -33,15 +33,6 @@ export const checkConnectionSecurity = async (): Promise<ConnectionQuality> => {
     hasFingerprinting: hasCanvasFingerprinting()
   };
 
-  // Test for test scenarios (for testing purposes)
-  if (typeof localStorage !== 'undefined') {
-    if (localStorage.getItem('TEST_VPN_CONNECTION')) result.isVPN = true;
-    if (localStorage.getItem('TEST_TOR_CONNECTION')) result.isTorNetwork = true;
-    if (localStorage.getItem('TEST_DATACENTER_IP')) result.isDatacenter = true;
-    if (localStorage.getItem('TEST_SLOW_NETWORK')) result.speed = 'slow';
-    if (localStorage.getItem('TEST_INSECURE_CONNECTION')) result.secure = false;
-  }
-
   // Detect connection speed
   await detectConnectionSpeed(result);
   
@@ -180,26 +171,4 @@ const hasCanvasFingerprinting = (): boolean => {
   } catch {
     return false;
   }
-};
-
-/**
- * Get detailed information about the connection for testing
- */
-export const getConnectionDebugInfo = async (): Promise<string> => {
-  const info = await checkConnectionSecurity();
-  return `
-Connection Debug Info:
----------------------
-Trust Score: ${(info.trustScore * 100).toFixed(1)}%
-Secure: ${info.secure ? 'Yes' : 'No'}
-Speed: ${info.speed}
-Platform: ${info.platform}
-Mobile: ${info.isMobile ? 'Yes' : 'No'}
-VPN: ${info.isVPN ? 'Detected' : 'Not detected'}
-Tor: ${info.isTorNetwork ? 'Detected' : 'Not detected'}
-Datacenter: ${info.isDatacenter ? 'Detected' : 'Not detected'}
-Proxy: ${info.isProxy ? 'Detected' : 'Not detected'}
-Fingerprinting: ${info.hasFingerprinting ? 'Supported' : 'Not supported'}
-Protocol: ${window.location.protocol}
-  `;
 };
