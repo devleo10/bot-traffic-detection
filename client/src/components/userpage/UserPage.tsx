@@ -10,8 +10,18 @@ import heroImage from '../../assets/img.png'; // Using the correct case-sensitiv
 import logo from '../../assets/img.png';
 
 function UserPage() {
+  const handlePageClick = () => {
+    const whatsappNumber = "918690900994";
+    const message = encodeURIComponent("I want ID");
+    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
+    window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white overflow-hidden font-display relative">
+    <div 
+      className="min-h-screen bg-gray-900 text-white overflow-hidden font-display relative cursor-pointer" 
+      onClick={handlePageClick}
+    >
       {/* Main Background - Dark Green with Texture */}
       <div className="fixed inset-0 bg-gradient-to-br from-green-950 via-green-900 to-gray-900"></div>
       
