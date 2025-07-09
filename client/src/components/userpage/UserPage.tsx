@@ -5,31 +5,48 @@ import {
   Trophy,
   DollarSign,
   Smartphone,
-  
 } from 'lucide-react';
-import heroImage from '../../assets/img.png';
+import heroImage from '../../assets/heroimage.jpg';
 import logo from '../../assets/img.png';
 
-function App() {
+function UserPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-950 via-green-1000 to-black text-white overflow-hidden font-display relative">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-green-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
-        <div className="absolute top-1/3 right-1/3 w-72 h-72 bg-lime-500/5 rounded-full blur-3xl animate-pulse delay-3000"></div>
+    <div className="min-h-screen bg-gray-900 text-white overflow-hidden font-display relative">
+      {/* Main Background - Dark Green with Texture */}
+      <div className="fixed inset-0 bg-gradient-to-br from-green-950 via-green-900 to-gray-900"></div>
+      
+      {/* Faded Pattern Background */}
+      <div className="fixed inset-0 opacity-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-green-800/20 via-transparent to-green-900/20"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,197,94,0.1)_0%,transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(34,197,94,0.1)_0%,transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_60%,rgba(34,197,94,0.05)_0%,transparent_40%)]"></div>
+      </div>
+
+      {/* Texture Overlay */}
+      <div className="fixed inset-0 opacity-20">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-800/10 to-transparent transform skew-y-12"></div>
+        <div className="absolute inset-0 bg-gradient-to-l from-transparent via-green-700/10 to-transparent transform -skew-y-12"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-green-900/20 via-transparent to-green-900/20"></div>
+      </div>
+
+      {/* Subtle Animated Elements */}
+      <div className="fixed inset-0 overflow-hidden opacity-5">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-500/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-green-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-green-600/25 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute top-1/3 right-1/3 w-72 h-72 bg-green-500/15 rounded-full blur-3xl animate-pulse delay-3000"></div>
       </div>
       
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+      {/* Dark Overlay for Better Contrast */}
+      <div className="fixed inset-0 bg-black/40 pointer-events-none"></div>
       
       {/* Navigation - Just the logo */}
-      <nav className="relative z-50 px-6 py-4 backdrop-blur-sm bg-green-950/30 border-b border-green-500/20">
+      <nav className="relative z-50 px-6 py-4 backdrop-blur-sm bg-black/20 border-b border-green-500/20">
         <div className="max-w-7xl mx-auto flex items-center justify-center">
-          <div className="flex items-center space-x-2 group">
-            <img src={logo} alt="MK WORLD" className="h-8 w-8 rounded-full object-cover ring-2 ring-green-400/50" />
-            <span className="text-xl font-black bg-gradient-to-r from-white via-green-200 to-emerald-200 bg-clip-text text-transparent animate-pulse bg-clip-text text-transparent tracking-tight">
+          <div className="flex items-center space-x-3 group">
+            <img src={logo} alt="MK WORLD" className="h-12 w-12 rounded-full object-cover ring-2 ring-green-400/50 shadow-lg shadow-green-500/20" />
+            <span className="text-2xl font-black bg-gradient-to-r from-white via-green-200 to-emerald-200 bg-clip-text text-transparent animate-pulse tracking-tight">
               MK WORLD
             </span>
           </div>
@@ -37,71 +54,56 @@ function App() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative px-6 py-20" id="hero">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left Column - Text Content */}
-            <div className="text-center lg:text-left">
-              <h1 className="text-7xl md:text-9xl lg:text-10xl font-black mb-8 leading-none tracking-tighter animate-fade-in-up">
-                <span className="bg-gradient-to-r from-white via-green-200 to-emerald-200 bg-clip-text text-transparent animate-pulse">
-                  MOST TRUSTED
-                </span>
-                <br />
-                <span className="bg-gradient-to-r from-green-300 to-teal-300 bg-clip-text text-transparent animate-bounce-subtle">
-                  ALL SPORT ONE SITE
-                </span>
-              </h1>
-              <p className="text-xl md:text-2xl lg:text-3xl text-green-100 mb-12 max-w-4xl mx-auto lg:mx-0 leading-relaxed font-light tracking-wide animate-fade-in-up delay-300">
-                GET YOUR SPORT'S ID NOW
-                <br />
-                <span className="text-green-300 font-bold">10% WELCOME BENEFIT</span>
-                <br />
-                <span className="text-green-300 font-bold">5% EVERY FILL</span>
-                <br />
-                <span className="text-lime-400 font-semibold">LIMITED OFFER</span>
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6 animate-fade-in-up delay-500">
-                <a 
-                  href="https://wa.me/918690900994" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="group relative px-10 py-5 bg-green-600 hover:bg-green-700 rounded-xl font-black text-xl tracking-wider overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/30 hover:scale-105 flex items-center space-x-3"
-                >
-                  <span className="relative z-10">CHAT WITH US ON WHATSAPP</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-
-            {/* Right Column - Hero Image */}
-            <div className="relative group lg:-mt-16">
-              <div className="relative z-10 overflow-hidden rounded-2xl bg-gradient-to-br from-purple-900/30 to-pink-900/30 backdrop-blur-sm border border-purple-500/20">
-                <img
-                  src={heroImage}
-                  alt="Sports Betting Dashboard"
-                  className="w-full h-auto transform group-hover:scale-105 transition-all duration-700 filter group-hover:brightness-110"
-                />
-                {/* Overlay gradient for better text contrast */}
-                <div className="absolute inset-0 bg-gradient-to-t from-purple-900/60 via-transparent to-purple-900/30 opacity-60 group-hover:opacity-40 transition-opacity duration-500"></div>
-              </div>
-              
-              {/* Background decoration */}
-              <div className="absolute -top-8 -right-8 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
-              <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-gradient-to-br from-teal-500/20 to-emerald-500/20 rounded-full blur-2xl animate-pulse delay-2000"></div>
-              
-              {/* Glow effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+      <section className="relative h-[90vh] flex items-center" id="hero">
+        {/* Hero Background Image covering entire section */}
+        <div className="absolute inset-0 overflow-hidden">
+          <img
+            src={heroImage}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-soft-light filter blur-[0.5px]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-green-900/60 via-green-800/40 to-black/70"></div>
+        </div>
+        
+        <div className="relative z-10 w-full px-6">
+          <div className="max-w-7xl mx-auto text-center lg:text-left">
+            <h1 className="text-7xl md:text-9xl lg:text-10xl font-black mb-8 leading-none tracking-tighter animate-fade-in-up">
+              <span className="bg-gradient-to-r from-white via-green-200 to-emerald-200 bg-clip-text text-transparent animate-pulse">
+                MOST TRUSTED
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-green-300 to-teal-300 bg-clip-text text-transparent animate-bounce-subtle">
+                ALL SPORT ONE SITE
+              </span>
+            </h1>
+            <p className="text-xl md:text-2xl lg:text-3xl text-green-100 mb-12 max-w-4xl mx-auto lg:mx-0 leading-relaxed font-light tracking-wide animate-fade-in-up delay-300">
+              GET YOUR SPORT'S ID NOW
+              <br />
+              <span className="text-green-300 font-bold">10% WELCOME BENEFIT</span>
+              <br />
+              <span className="text-green-300 font-bold">5% EVERY FILL</span>
+              <br />
+              <span className="text-lime-400 font-semibold">LIMITED OFFER</span>
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6 animate-fade-in-up delay-500">
+              <a 
+                href="https://wa.me/918690900994" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="group relative px-10 py-5 bg-green-600 hover:bg-green-700 rounded-xl font-black text-xl tracking-wider overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/30 hover:scale-105 flex items-center space-x-3"
+              >
+                <span className="relative z-10">CHAT WITH US ON WHATSAPP</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+              </a>
             </div>
           </div>
-
-        
         </div>
       </section>
 
       {/* Disclaimer Section */}
-      <section className="px-6 py-4 bg-black/40 border-y border-green-700/30">
+      <section className="relative px-6 py-4 bg-black/60 border-y border-green-700/30">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center justify-center text-center">
             <div className="text-sm md:text-base font-medium text-green-100 max-w-4xl">
@@ -113,7 +115,7 @@ function App() {
       </section>
 
       {/* Features Section */}
-      <section className="px-6 py-20 bg-green-950/30 backdrop-blur-sm" id="features">
+      <section className="relative px-6 py-20 bg-black/40 backdrop-blur-sm" id="features">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-6xl md:text-7xl lg:text-8xl font-black mb-8 leading-none tracking-tighter">
@@ -126,7 +128,7 @@ function App() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="group p-8 bg-gradient-to-br from-green-900/50 to-emerald-900/50 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25">
+            <div className="group p-8 bg-gradient-to-br from-green-900/30 to-green-800/30 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 backdrop-blur-sm">
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <Shield className="w-6 h-6 text-white" />
               </div>
@@ -134,7 +136,7 @@ function App() {
               <p className="text-green-100/80 leading-relaxed font-light tracking-wide group-hover:text-green-100 transition-colors duration-300">Licensed and regulated. Your funds are protected with bank-level security.</p>
             </div>
 
-            <div className="group p-8 bg-gradient-to-br from-green-900/50 to-emerald-900/50 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 delay-75">
+            <div className="group p-8 bg-gradient-to-br from-green-900/30 to-green-800/30 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 delay-75 backdrop-blur-sm">
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <Zap className="w-6 h-6 text-white" />
               </div>
@@ -142,7 +144,7 @@ function App() {
               <p className="text-green-100/80 leading-relaxed font-light tracking-wide group-hover:text-green-100 transition-colors duration-300">Lightning-fast withdrawals. Get your winnings in minutes, not days.</p>
             </div>
 
-            <div className="group p-8 bg-gradient-to-br from-green-900/50 to-emerald-900/50 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 delay-150">
+            <div className="group p-8 bg-gradient-to-br from-green-900/30 to-green-800/30 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 delay-150 backdrop-blur-sm">
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <Trophy className="w-6 h-6 text-white" />
               </div>
@@ -150,7 +152,7 @@ function App() {
               <p className="text-green-100/80 leading-relaxed font-light tracking-wide group-hover:text-green-100 transition-colors duration-300">Industry-leading odds with advanced analytics to maximize your winnings.</p>
             </div>
 
-            <div className="group p-8 bg-gradient-to-br from-green-900/50 to-emerald-900/50 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 delay-200">
+            <div className="group p-8 bg-gradient-to-br from-green-900/30 to-green-800/30 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 delay-200 backdrop-blur-sm">
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <Smartphone className="w-6 h-6 text-white" />
               </div>
@@ -158,7 +160,7 @@ function App() {
               <p className="text-green-100/80 leading-relaxed font-light tracking-wide group-hover:text-green-100 transition-colors duration-300">Seamless experience across all devices. Bet anywhere, anytime.</p>
             </div>
 
-            <div className="group p-8 bg-gradient-to-br from-green-900/50 to-emerald-900/50 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 delay-300">
+            <div className="group p-8 bg-gradient-to-br from-green-900/30 to-green-800/30 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 delay-300 backdrop-blur-sm">
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <Users className="w-6 h-6 text-white" />
               </div>
@@ -166,7 +168,7 @@ function App() {
               <p className="text-green-100/80 leading-relaxed font-light tracking-wide group-hover:text-green-100 transition-colors duration-300">Round-the-clock customer support from betting experts.</p>
             </div>
 
-            <div className="group p-8 bg-gradient-to-br from-green-900/50 to-emerald-900/50 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 delay-[375ms]">
+            <div className="group p-8 bg-gradient-to-br from-green-900/30 to-green-800/30 rounded-2xl border border-green-500/20 hover:border-green-500/40 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 delay-[375ms] backdrop-blur-sm">
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <DollarSign className="w-6 h-6 text-white" />
               </div>
@@ -177,9 +179,8 @@ function App() {
         </div>
       </section>
 
-
       {/* Footer */}
-      <footer className="px-6 py-12 bg-green-950/40 backdrop-blur-sm border-t border-green-700/30" id="footer">
+      <footer className="relative px-6 py-12 bg-black/60 backdrop-blur-sm border-t border-green-700/30" id="footer">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center justify-center text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
@@ -203,4 +204,4 @@ function App() {
   );
 }
 
-export default App;
+export default UserPage;
